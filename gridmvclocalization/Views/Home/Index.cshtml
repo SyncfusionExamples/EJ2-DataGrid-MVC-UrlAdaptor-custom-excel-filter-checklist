@@ -1,0 +1,29 @@
+﻿@{
+    ViewBag.Title = "Grid UrlAdaptor";
+}
+
+<div>
+    @Html.EJS().Grid("Grid").ActionBegin("actionbegin").AllowFiltering().AllowPaging().PageSettings(page => page.PageSize(5)).FilterSettings(filter => { filter.Type(Syncfusion.EJ2.Grids.FilterType.Excel); }).DataSource(dataManager => {dataManager.Url("/Home/UrlDatasource").Adaptor("UrlAdaptor");}).Width("auto").Columns(col =>
+{
+    col.Field("EmployeeID").HeaderText("EmployeeID").IsPrimaryKey(true).Visible(false).Add();
+    col.Field("OrderID").HeaderText("OrderID").Add();
+    col.Field("CustomerID").HeaderText("FirstName").Add();
+    col.Field("ShipAddress").HeaderText("Ship Address").Width(150).Add();
+}).Render()
+</div>
+<script>
+    function actionbegin(args) {
+        if (args.requestType === "filterchoicerequest") {
+            var filterfields = [];
+            var objFilter = Object.keys(args.filterModel.existingPredicate);
+            for (let i = 0; i < objFilter.length; i++) {
+                filterfields.push(objFilter[i]);
+            }
+            if (!filterfields.includes(args.filterModel.options.field)) {
+                filterfields.push(args.filterModel.options.field);
+            }
+            args.query.distincts = [];
+            args.query.select(filterfields); // Created the select query
+        }
+    }
+</script>
